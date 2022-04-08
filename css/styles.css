@@ -250,5 +250,6 @@ footer a, footer a:hover {
   .flip-box-back {
     background-color: #c41e3a ;
     color: white;
+    font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif;
     transform: rotateY(180deg);
   }
