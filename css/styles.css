@@ -248,7 +248,7 @@ footer a, footer a:hover {
   
   /* Style the back side */
   .flip-box-back {
-    background-color: maroon;
+    background-color: #c41e3a ;
     color: white;
     transform: rotateY(180deg);
   }
