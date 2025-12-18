@@ -1,13 +1,17 @@
 import Link from 'next/link'
 import Navigation from '@/components/Navigation'
-import { profile } from '@/data/profile'
+import { profile, CV } from '@/data/profile'
 
 export const metadata = {
   title: `CV | ${profile.name}`,
   description: `Curriculum Vitae of ${profile.name}`,
 }
 
-export default function CVPage() {
+interface CVPageContentProps {
+  profile: CV;
+}
+
+function CVPageContent({ profile }: CVPageContentProps) {
   return (
     <>
       <Navigation />
@@ -220,4 +224,8 @@ export default function CVPage() {
       </footer>
     </>
   )
+}
+
+export default function CVPage() {
+  return <CVPageContent profile={profile} />
 }

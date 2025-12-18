@@ -37,6 +37,10 @@ export interface Profile {
     date: string;
     text: string;
   }>;
+}
+
+// CV interface extends Profile and adds CV-specific fields
+export interface CV extends Profile {
   education: Array<{
     degree: string;
     institution: string;
@@ -50,12 +54,8 @@ export interface Profile {
     details?: string[];
   }>;
   skills: string[];
+// =================================================================
 }
-
-// =================================================================
-// YOUR INFORMATION - EDIT BELOW
-// =================================================================
-
 export const profile: Profile = {
   // Basic Information
   name: "Amin Mahjoub",
@@ -102,7 +102,7 @@ export const profile: Profile = {
       description:
         "Built a physics-informed lensless imaging reconstruction pipeline from coded diffraction patterns using wave optics constraints. Implemented iterative ADMM and an unrolled Deep/Learned ADMM architecture, benchmarking against CNN denoisers and U-Net reconstructions to improve PSNR and perceptual sharpness under noise.",
       links: [
-        { label: "Code", url: "https://github.com/mmahjoub5/EE592 FinalProject" }, // if the space breaks, replace with the exact repo URL
+        { label: "Code", url: "https://github.com/mmahjoub5/EE592_FinalProject" }, // if the space breaks, replace with the exact repo URL
       ],
       tags: ["Computational Imaging", "ADMM", "PyTorch", "Inverse Problems"],
     },
@@ -120,7 +120,7 @@ export const profile: Profile = {
       description:
         "Designed a distributed control framework where an LLM acts as a high-level planner for a robot arm, producing natural-language action sequences that are parsed and executed. Implemented world-state tracking, task decomposition, and action execution with a simulation environment to validate planning and state updates.",
       links: [
-        { label: "Code", url: "https://github.com/mmahjoub5/Multi Agent Goal Manager" },
+        { label: "Code", url: "https://github.com/mmahjoub5/Multi_Agent_Goal_Manager" },
       ],
       tags: ["Robotics", "LLMs", "Planning", "Simulation", "Multi-Agent"],
     },
@@ -136,7 +136,7 @@ export const profile: Profile = {
       venue: "Submitted to WACV 2026 Workshop",
       year: 2025,
       links: [
-        { label: "Manuscript", url: "#" }, // add PDF/arXiv when available
+        { label: "Manuscript", url: "https://arxiv.org/abs/2510.03906" }, // add PDF/arXiv when available
       ],
     },
   ],
