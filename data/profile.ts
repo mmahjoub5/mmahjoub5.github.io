@@ -58,11 +58,11 @@ export interface Profile {
 
 export const profile: Profile = {
   // Basic Information
-  name: "[PUT NAME HERE]",
-  title: "[PUT TITLE HERE]",
+  name: "Amin Mahjoub",
+  title: "Eletrical Engineer",
   tagline: "I research and build intelligent systems that push the boundaries of what's possible.",
-  email: "[PUT EMAIL HERE]",
-  location: "San Francisco, CA", // Optional
+  email: "aminmahjoub2000@gmail.com",
+  location: "Seattle, WA", // Optional
 
   // About Section
   about: "[PUT ABOUT HERE] - This is a placeholder paragraph about your research background and interests. Replace this with 2-4 sentences describing your academic journey, research focus, and what drives your work. For example: 'I'm a PhD student in Computer Science at XYZ University, advised by Prof. ABC. My research focuses on machine learning and natural language processing, with emphasis on making AI systems more interpretable and robust.'",
@@ -71,18 +71,18 @@ export const profile: Profile = {
   links: {
     cv: "/cv.pdf", // Path to your CV PDF in the public folder
     googleScholar: "[PUT GOOGLE SCHOLAR URL HERE]",
-    github: "[PUT GITHUB URL HERE]",
-    linkedin: "[PUT LINKEDIN URL HERE]",
+    github: "https://github.com/mmahjoub5",
+    linkedin: "https://www.linkedin.com/in/amin-mahjoub/",
     twitter: "[PUT TWITTER URL HERE]", // Optional
   },
 
   // Research Interests (3-6 items recommended)
   interests: [
-    "[PUT INTEREST 1 HERE - e.g., Machine Learning]",
-    "[PUT INTEREST 2 HERE - e.g., Natural Language Processing]",
-    "[PUT INTEREST 3 HERE - e.g., Computer Vision]",
-    "[PUT INTEREST 4 HERE - e.g., Reinforcement Learning]",
-    "[PUT INTEREST 5 HERE - e.g., AI Safety & Interpretability]",
+    "Computer Hardware",
+    "Digital Systems",
+    "Embedded Systems",
+    "Signal Processing",
+    "VLSI Design",
   ],
 
   // Projects (3-6 recommended for homepage)
