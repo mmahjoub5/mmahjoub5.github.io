@@ -60,12 +60,12 @@ export const profile: Profile = {
   // Basic Information
   name: "Amin Mahjoub",
   title: "Eletrical Engineer",
-  tagline: "I research and build intelligent systems that push the boundaries of what's possible.",
+  tagline: "Building robust hardware-software systems for real-world impact",
   email: "aminmahjoub2000@gmail.com",
   location: "Seattle, WA", // Optional
 
   // About Section
-  about: "[PUT ABOUT HERE] - This is a placeholder paragraph about your research background and interests. Replace this with 2-4 sentences describing your academic journey, research focus, and what drives your work. For example: 'I'm a PhD student in Computer Science at XYZ University, advised by Prof. ABC. My research focuses on machine learning and natural language processing, with emphasis on making AI systems more interpretable and robust.'",
+  about: "I am an Electrical Engineer at Microsoft Surface working on high-speed digital and mixed-signal systems, with parallel research experience in machine learning and computer vision. My research interests include hardware–software co-design, efficient inference, and robust perception pipelines for real-world deployment. I enjoy building end-to-end systems that connect algorithms, evaluation, and hardware implementation.",
 
   // Social Links
   links: {
@@ -88,64 +88,55 @@ export const profile: Profile = {
   // Projects (3-6 recommended for homepage)
   projects: [
     {
-      title: "[PUT PROJECT 1 TITLE HERE]",
-      description: "[PUT PROJECT 1 DESCRIPTION HERE] - A brief 2-3 sentence description of what this project does, what techniques you used, and why it matters.",
+      title: "Defogging Benchmark for Autonomous Driving (WACV 2026 Submission)",
+      description:
+        "Designed and ran a large-scale benchmark comparing classical filters, transformer-based models, chained preprocessing, and VLM-based image editing for fog removal. Built quantitative evaluation for object detection (mAP) and panoptic segmentation (PQ/RQ/SQ) using YOLOv11l and Mask2Former, and developed a VLM-as-a-judge rubric that strongly correlated with mAP (r = 0.94).",
       links: [
-        { label: "Paper", url: "#" },
-        { label: "Code", url: "#" },
-        { label: "Demo", url: "#" },
+        { label: "Paper (Submission)", url: "#" }, // add arXiv / PDF when available
+        { label: "Code", url: "#" }, // add repo link if public
       ],
-      tags: ["Machine Learning", "Python", "PyTorch"],
+      tags: ["Computer Vision", "Evaluation", "Autonomous Driving", "VLMs"],
     },
     {
-      title: "[PUT PROJECT 2 TITLE HERE]",
-      description: "[PUT PROJECT 2 DESCRIPTION HERE] - Another project description highlighting your technical skills and research contributions.",
+      title: "Lensless Imaging via Iterative ADMM & Deep / Learned ADMM",
+      description:
+        "Built a physics-informed lensless imaging reconstruction pipeline from coded diffraction patterns using wave optics constraints. Implemented iterative ADMM and an unrolled Deep/Learned ADMM architecture, benchmarking against CNN denoisers and U-Net reconstructions to improve PSNR and perceptual sharpness under noise.",
       links: [
-        { label: "Paper", url: "#" },
-        { label: "Code", url: "#" },
+        { label: "Code", url: "https://github.com/mmahjoub5/EE592 FinalProject" }, // if the space breaks, replace with the exact repo URL
       ],
-      tags: ["Deep Learning", "NLP"],
+      tags: ["Computational Imaging", "ADMM", "PyTorch", "Inverse Problems"],
     },
     {
-      title: "[PUT PROJECT 3 TITLE HERE]",
-      description: "[PUT PROJECT 3 DESCRIPTION HERE] - Describe the impact and technical novelty of this project.",
+      title: "JobHuntTool — AI-Powered Job Search & Interview Assistant",
+      description:
+        "Led a hackathon build of an AI job-application agent using CrewAI to parse job descriptions, create embeddings, and generate structured interview insights. Built a Chrome extension + backend pipeline for automated job extraction, RAG-style querying, and Google Sheets integration for job tracking and resume-to-job alignment.",
       links: [
-        { label: "Paper", url: "#" },
+        { label: "Code", url: "https://github.com/Leon753/JobHuntTool" },
       ],
-      tags: ["Computer Vision", "Research"],
+      tags: ["Agents", "RAG", "Chrome Extension", "Backend", "Google Sheets"],
+    },
+    {
+      title: "LLM-Driven Task Manager for Robot Arm Control",
+      description:
+        "Designed a distributed control framework where an LLM acts as a high-level planner for a robot arm, producing natural-language action sequences that are parsed and executed. Implemented world-state tracking, task decomposition, and action execution with a simulation environment to validate planning and state updates.",
+      links: [
+        { label: "Code", url: "https://github.com/mmahjoub5/Multi Agent Goal Manager" },
+      ],
+      tags: ["Robotics", "LLMs", "Planning", "Simulation", "Multi-Agent"],
     },
   ],
 
   // Publications (most recent first)
   publications: [
     {
-      authors: "[PUT AUTHORS HERE - e.g., Jane Doe, John Smith, Alice Johnson]",
-      title: "[PUT PUBLICATION 1 TITLE HERE]",
-      venue: "Conference on Neural Information Processing Systems (NeurIPS)",
-      year: 2024,
+      authors:
+        "Aryashad, A.; Razmara, P.; Mahjoub, A.; Azizi, S.; Salmani, M.; Firouzkouhi, A.",
+      title:
+        "From Filters to VLMs: Benchmarking Defogging Methods through Object Detection and Segmentation Performance",
+      venue: "Submitted to WACV 2026 Workshop",
+      year: 2025,
       links: [
-        { label: "Paper", url: "#" },
-        { label: "Code", url: "#" },
-        { label: "arXiv", url: "#" },
-      ],
-    },
-    {
-      authors: "[PUT AUTHORS HERE]",
-      title: "[PUT PUBLICATION 2 TITLE HERE]",
-      venue: "International Conference on Machine Learning (ICML)",
-      year: 2023,
-      links: [
-        { label: "Paper", url: "#" },
-        { label: "arXiv", url: "#" },
-      ],
-    },
-    {
-      authors: "[PUT AUTHORS HERE]",
-      title: "[PUT PUBLICATION 3 TITLE HERE]",
-      venue: "Conference on Computer Vision and Pattern Recognition (CVPR)",
-      year: 2023,
-      links: [
-        { label: "Paper", url: "#" },
+        { label: "Manuscript", url: "#" }, // add PDF/arXiv when available
       ],
     },
   ],
@@ -153,86 +144,74 @@ export const profile: Profile = {
   // News / Updates (most recent first, 3-5 items recommended)
   news: [
     {
-      date: "Dec 2024",
-      text: "[PUT NEWS 1 HERE - e.g., Paper accepted to NeurIPS 2024!]",
+      date: "Dec 2025",
+      text: "CV updated with WACV 2026 workshop submission and recent project work.",
     },
     {
-      date: "Sep 2024",
-      text: "[PUT NEWS 2 HERE - e.g., Started PhD at XYZ University]",
+      date: "2025",
+      text: "Co-inventor on patent: Systems and Methods for Automated Music-Level Generation from Sheet Music (WO2025024205A2).",
     },
     {
-      date: "Jun 2024",
-      text: "[PUT NEWS 3 HERE - e.g., Presented research at ABC Workshop]",
+      date: "Aug 2023",
+      text: "Started as Electrical Engineer at Microsoft Surface, owning end-to-end electrical development for high-volume products.",
     },
   ],
 
   // CV Page Content
   education: [
     {
-      degree: "Ph.D. in Computer Science",
-      institution: "[PUT UNIVERSITY HERE]",
-      year: "2024 - Present",
-      details: [
-        "Advisor: [PUT ADVISOR NAME HERE]",
-        "Focus: [PUT RESEARCH FOCUS HERE]",
-      ],
+      degree: "M.S. in Electrical and Computer Engineering",
+      institution: "University of Southern California (USC), Los Angeles, CA",
+      year: "Aug 2019 – May 2023",
+      details: ["GPA: 3.66/4.0"],
     },
     {
-      degree: "M.S. in Computer Science",
-      institution: "[PUT UNIVERSITY HERE]",
-      year: "2022 - 2024",
-      details: [
-        "GPA: 4.0/4.0",
-        "Thesis: [PUT THESIS TITLE HERE]",
-      ],
-    },
-    {
-      degree: "B.S. in Computer Science",
-      institution: "[PUT UNIVERSITY HERE]",
-      year: "2018 - 2022",
-      details: [
-        "Summa Cum Laude",
-        "Minor in Mathematics",
-      ],
+      degree: "B.S. in Electrical and Computer Engineering",
+      institution: "University of Southern California (USC), Los Angeles, CA",
+      year: "Aug 2019 – May 2023",
+      details: ["GPA: 3.77/4.0"],
     },
   ],
 
   experience: [
     {
-      title: "Research Intern",
-      organization: "[PUT ORGANIZATION HERE - e.g., Google Research]",
-      period: "Summer 2024",
+      title: "Electrical Engineer",
+      organization: "Microsoft Surface — Seattle, WA",
+      period: "Aug 2023 – Present",
       details: [
-        "[PUT DETAIL 1 - e.g., Worked on large language models]",
-        "[PUT DETAIL 2 - e.g., Improved model efficiency by 20%]",
-        "[PUT DETAIL 3 - e.g., Collaborated with senior researchers]",
+        "Led end-to-end electrical development including architecture, prototyping, validation, and mass production (500K+ units annually).",
+        "Designed high-speed digital and mixed-signal PCB systems (10+ layers) integrating SoCs, GPUs, DDR, NVMe, 5G, and camera subsystems.",
+        "Performed SI analysis (PCIe Gen4, USB 3.2, MIPI, DDR), reducing prototype iterations by ~30%.",
+        "Developed RTOS/HAL firmware for ARM MCUs to improve responsiveness and power management.",
+        "Modeled AC/DC power rails and built LTSpice simulations for motor drivers, converters, and mixed-signal blocks.",
       ],
     },
     {
-      title: "Research Assistant",
-      organization: "[PUT ORGANIZATION HERE - e.g., XYZ Lab]",
-      period: "2022 - Present",
+      title: "Lead Researcher",
+      organization: "Defogging Benchmark for Autonomous Driving (WACV 2026 Submission) — Los Angeles, CA",
+      period: "2024 – 2025",
       details: [
-        "[PUT DETAIL 1]",
-        "[PUT DETAIL 2]",
+        "Designed empirical benchmark across 54+ defogging pipelines (classical, transformer, chained preprocessing, VLM editing).",
+        "Built downstream perception evaluation for detection (mAP) and panoptic segmentation (PQ/RQ/SQ).",
+        "Developed VLM-as-a-judge rubric and prompt strategy; observed strong alignment with quantitative metrics (r = 0.94 with mAP).",
       ],
     },
     {
-      title: "Software Engineer Intern",
-      organization: "[PUT ORGANIZATION HERE]",
-      period: "Summer 2023",
+      title: "Software Engineer",
+      organization: "Notey’s World — Los Angeles, CA",
+      period: "Feb 2022 – Oct 2023",
       details: [
-        "[PUT DETAIL 1]",
-        "[PUT DETAIL 2]",
+        "Built a real-time pitch and chord detection audio engine (~4 ms latency) using Harmonic Product Spectrum.",
+        "Designed analytics pipelines and data-driven features; deployed backend with Firebase NoSQL.",
       ],
     },
   ],
 
   skills: [
-    "Python, C++, JavaScript, TypeScript",
-    "PyTorch, TensorFlow, JAX",
-    "Machine Learning, Deep Learning, NLP, Computer Vision",
-    "Git, Docker, Linux, AWS",
-    "Research, Technical Writing, Collaboration",
+    "Python, C/C++, TypeScript/JavaScript",
+    "PyTorch, CUDA, ADMM optimization, CNN/UNet models, VLM evaluation",
+    "High-speed digital design (PCIe, USB, MIPI, DDR), mixed-signal circuits",
+    "Signal / power integrity, ARM RTOS/HAL firmware, LTSpice",
+    "Docker, Linux, CI/CD, Google Sheets API, backend pipelines",
   ],
 };
