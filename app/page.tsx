@@ -188,24 +188,43 @@ export default function Home() {
           </div>
         </section>
 
-        {/* News Section */}
-        {profile.news && profile.news.length > 0 && (
-          <section className="py-16">
-            <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-              <h2 className="text-3xl font-bold text-gray-900 mb-8">News & Updates</h2>
-              <div className="space-y-4">
-                {profile.news.map((item, index) => (
-                  <div key={index} className="flex gap-4">
-                    <span className="text-sm font-medium text-gray-600 whitespace-nowrap">
-                      {item.date}
-                    </span>
-                    <p className="text-gray-700">{item.text}</p>
-                  </div>
-                ))}
-              </div>
+{/* News Section */}
+{profile.news && profile.news.length > 0 && (
+  <section className="py-16">
+    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      {/* Header: revert to original Tailwind color */}
+      <h2 className="text-3xl font-bold text-gray-900 mb-8">
+        News & Updates
+      </h2>
+
+      {/* Force LIGHT theme only for the list */}
+      <ul
+        data-theme="light"
+        className="list bg-base-100 rounded-box shadow-md divide-y divide-gray-200"
+      >
+        {profile.news.map((item, index) => (
+          <li key={index} className="list-row p-6 items-start">
+            
+            {/* Date column */}
+            <div className="text-lg font-semibold text-gray-800 whitespace-nowrap">
+              {item.date}
             </div>
-          </section>
-        )}
+
+            {/* News column */}
+            <div className="list-col-grow text-gray-700">
+              {item.text}
+            </div>
+
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+)}
+
+
+
 
         {/* Contact Section */}
         <section id="contact" className="bg-gray-50 py-16">

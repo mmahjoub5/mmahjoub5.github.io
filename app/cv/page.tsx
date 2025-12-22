@@ -69,23 +69,25 @@ function CVPageContent({ profile }: CVPageContentProps) {
             </h2>
             <div className="space-y-6">
               {profile.education.map((edu, index) => (
-                <div key={index} className="pl-5">
-                  <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2 mb-2">
-                    <h3 className="text-lg font-semibold text-gray-900">
+                <div key={index} className="grid grid-cols-1 sm:grid-cols-[1fr_auto] gap-x-4 gap-y-2">
+                  <div className="pl-5">
+                    <h3 className="text-lg font-semibold text-gray-900 mb-2">
                       {edu.degree}
                     </h3>
-                    <span className="text-sm text-gray-600 font-medium">
+                    <p className="text-gray-700 mb-2">{edu.institution}</p>
+                    {edu.details && edu.details.length > 0 && (
+                      <ul className="list-disc list-inside space-y-1 text-gray-700">
+                        {edu.details.map((detail, detailIndex) => (
+                          <li key={detailIndex}>{detail}</li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+                  <div className="pl-5 sm:pl-0 sm:text-right sm:pt-0">
+                    <span className="text-sm text-gray-600 font-medium whitespace-nowrap">
                       {edu.year}
                     </span>
                   </div>
-                  <p className="text-gray-700 mb-2">{edu.institution}</p>
-                  {edu.details && edu.details.length > 0 && (
-                    <ul className="list-disc list-inside space-y-1 text-gray-700">
-                      {edu.details.map((detail, detailIndex) => (
-                        <li key={detailIndex}>{detail}</li>
-                      ))}
-                    </ul>
-                  )}
                 </div>
               ))}
             </div>
@@ -99,25 +101,25 @@ function CVPageContent({ profile }: CVPageContentProps) {
             </h2>
             <div className="space-y-6">
               {profile.experience.map((exp, index) => (
-                <div key={index} className="pl-5">
-                  <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2 mb-2">
-                    <div>
-                      <h3 className="text-lg font-semibold text-gray-900">
-                        {exp.title}
-                      </h3>
-                      <p className="text-gray-700">{exp.organization}</p>
-                    </div>
-                    <span className="text-sm text-gray-600 font-medium">
+                <div key={index} className="grid grid-cols-1 sm:grid-cols-[1fr_auto] gap-x-4 gap-y-2">
+                  <div className="pl-5">
+                    <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                      {exp.title}
+                    </h3>
+                    <p className="text-gray-700 mb-2">{exp.organization}</p>
+                    {exp.details && exp.details.length > 0 && (
+                      <ul className="list-disc list-inside space-y-1 text-gray-700">
+                        {exp.details.map((detail, detailIndex) => (
+                          <li key={detailIndex}>{detail}</li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+                  <div className="pl-5 sm:pl-0 sm:text-right sm:pt-0">
+                    <span className="text-sm text-gray-600 font-medium whitespace-nowrap">
                       {exp.period}
                     </span>
                   </div>
-                  {exp.details && exp.details.length > 0 && (
-                    <ul className="list-disc list-inside space-y-1 text-gray-700">
-                      {exp.details.map((detail, detailIndex) => (
-                        <li key={detailIndex}>{detail}</li>
-                      ))}
-                    </ul>
-                  )}
                 </div>
               ))}
             </div>
