@@ -21,7 +21,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className="font-sans">
+      <body className="font-sans min-h-dvh w-full bg-base-100">
         {children}
       </body>
     </html>

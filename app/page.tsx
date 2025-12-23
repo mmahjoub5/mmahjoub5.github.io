@@ -1,13 +1,15 @@
 import Image from 'next/image'
 import Link from 'next/link'
-import Navigation from '@/components/Navigation'
 import CopyEmailButton from '@/components/CopyEmailButton'
 import { profile } from '@/data/profile'
+import GoToCVButton from '@/components/GoToCVButton'
 
 export default function Home() {
   return (
-    <>
-      <Navigation />
+    <div className="w-full min-h-screen bg-white">
+
+        <GoToCVButton />
+
       <main className="min-h-screen">
         {/* Hero Section */}
         <section id="about" className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
@@ -261,6 +263,6 @@ export default function Home() {
           </p>
         </div>
       </footer>
-    </>
+    </div>
   )
 }

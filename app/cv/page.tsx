@@ -1,7 +1,6 @@
 import Link from 'next/link'
-import Navigation from '@/components/Navigation'
 import { profile, CV } from '@/data/profile'
-
+import GoToCVButton from '@/components/GoToCVButton'
 export const metadata = {
   title: `CV | ${profile.name}`,
   description: `Curriculum Vitae of ${profile.name}`,
@@ -14,7 +13,9 @@ interface CVPageContentProps {
 function CVPageContent({ profile }: CVPageContentProps) {
   return (
     <>
-      <Navigation />
+ <div className="w-full min-h-screen bg-white">
+     <GoToCVButton />
+
       <main className="min-h-screen bg-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           {/* Header with Download Button */}
@@ -224,6 +225,7 @@ function CVPageContent({ profile }: CVPageContentProps) {
           </p>
         </div>
       </footer>
+      </div>
     </>
   )
 }
