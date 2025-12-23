@@ -30,7 +30,11 @@ export default function TopNavLink() {
   if (!visible) return null
 
   return (
-    <div className="flex justify-end pt-6 pr-6">
+    <div
+      className={`flex pt-6 ${
+        isCV ? 'justify-start pl-6' : 'justify-end pr-6'
+      }`}
+    >
       <Link
         href={isCV ? '/' : '/cv'}
         className="font-bold hover:underline"

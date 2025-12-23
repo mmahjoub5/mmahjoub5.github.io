@@ -149,24 +149,17 @@ export const profile: CV = {
   news: [
     {
       date: "Dec 2025",
-      text: "CV updated with WACV 2026 workshop submission and recent project work.",
+      text: "WACV 2026 workshop submission and recent project work.",
+    },
+    {
+      date: "Aug 2023",
+      text: "Started as Electrical Engineer at Microsoft Surface, owning end-to-end electrical development for high-volume products.",
     },
     {
       date: "Jan 2022",
       text: "Co-inventor on patent: Systems and Methods for Automated Music-Level Generation from Sheet Music (WO2025024205A2).",
     },
-    {
-      date: "Aug 2023",
-      text: "Started as Electrical Engineer at Microsoft Surface, owning end-to-end electrical development for high-volume products.",
-    },
-        {
-      date: "Aug 2023",
-      text: "Started as Electrical Engineer at Microsoft Surface, owning end-to-end electrical development for high-volume products.",
-    },
-        {
-      date: "Aug 2023",
-      text: "Started as Electrical Engineer at Microsoft Surface, owning end-to-end electrical development for high-volume products.",
-    },
+
   ],
 
   // CV Page Content
