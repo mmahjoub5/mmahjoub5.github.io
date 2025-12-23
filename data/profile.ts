@@ -96,8 +96,7 @@ export const profile: CV = {
       description:
         "Designed and ran a large-scale benchmark comparing classical filters, transformer-based models, chained preprocessing, and VLM-based image editing for fog removal. Built quantitative evaluation for object detection (mAP) and panoptic segmentation (PQ/RQ/SQ) using YOLOv11l and Mask2Former, and developed a VLM-as-a-judge rubric that strongly correlated with mAP (r = 0.94).",
       links: [
-        { label: "Paper (Submission)", url: "#" }, // add arXiv / PDF when available
-        { label: "Code", url: "#" }, // add repo link if public
+        { label: "Paper (Submission)", url: "https://aradfir.github.io/filters-to-vlms-defogging-page/" }, // add arXiv / PDF when available
       ],
       tags: ["Computer Vision", "Evaluation", "Autonomous Driving", "VLMs"],
     },
