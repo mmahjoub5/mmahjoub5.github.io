@@ -4,6 +4,23 @@ import CopyEmailButton from '@/components/CopyEmailButton'
 import { profile } from '@/data/profile'
 import GoToCVButton from '@/components/GoToCVButton'
 
+
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Amin Mahjoub | Electrical Engineer | Hardware–Software Co-Design',
+  description:
+    'Electrical Engineer at Microsoft Surface working on hardware–software co-design, efficient inference, and robust perception systems.',
+  keywords: [
+    'Electrical Engineer',
+    'Hardware Software Co-Design',
+    'Embedded Systems',
+    'Computer Vision',
+    'Efficient Inference',
+    'VLSI',
+  ],
+}
+
 export default function Home() {
   return (
     <div className="w-full min-h-screen bg-white">

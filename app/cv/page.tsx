@@ -10,6 +10,7 @@ interface CVPageContentProps {
   profile: CV;
 }
 
+
 function CVPageContent({ profile }: CVPageContentProps) {
   return (
     <>
