@@ -1,0 +1,57 @@
+export const metadata = {
+  title: "Building a Minimal Tensor Autograd Engine in C++",
+  description:
+    "Reverse-mode autodiff, matrix multiply backprop, and gradient verification via finite differences.",
+};
+
+
+
+
+# Building a Minimal Tensor Autograd Engine in C++
+
+This post walks through a minimal tensor-based automatic differentiation engine
+implemented from scratch in C++.
+
+## Motivation
+I was grabbing lunch with my cousin when we started talking about topics we’d learned in school. At some point, I brought up automatic differentiation in modern AI tools. I repeated what I remembered from class that if you know the forward computation, you can automatically compute gradients.
+
+Then he asked a simple question: “How does it actually work?”
+
+I didn’t have a good answer.
+
+That moment made it clear that, while I could use autograd every day, I didn’t truly understand the mechanism behind it. So when I got home, I decided to build a small automatic differentiation engine from scratch. 
+
+To ground things properly, I went back to a textbook. Deep Learning by Goodfellow, Bengio, and Courville turned out to be exactly what I needed: Chapter 6.5 covers the theory and algorithms behind backpropagation and automatic differentiation in a clear, formal way.
+
+After that, I watched an older Stanford CS231N lecture on backpropagation. Working through gradients by hand, step by step, provided the visual and intuitive understanding that textbooks alone sometimes miss. Seeing the chain rule applied explicitly across computation graphs helped solidify how gradients actually flow during reverse-mode autodiff.
+
+That combination—modern explanations, textbook rigor, and hand-derived examples—set the foundation for implementing autograd from scratch.
+
+
+## Core Idea
+![Computational graph example](/graph.jpg)
+The foundation of backpropagation—often referred to as automatic differentiation—is the computational graph. A computational graph represents a program as a directed acyclic graph (DAG), where each node corresponds to a mathematical operation and each edge represents the flow of data between operations.
+
+
+
+
+# Forward Path 
+The forward path computes the numerical value of each node while building the computational graph. Each operation—addition, multiplication, or nonlinearity—produces an output value and records how that value was computed from its inputs.
+
+Rather than executing the computation and discarding intermediate results, the forward pass stores these intermediate nodes and their relationships. This information is essential: it defines the structure of the graph that backpropagation will later traverse.
+
+By the end of the forward pass, the final scalar loss is computed, and the full computation graph encoding every operation needed to apply the chain rule—is available for gradient computation.
+
+# Backward Path
+The backward path computes gradients by traversing the computational graph in reverse order, starting from the final loss node. Instead of recomputing values, it propagates a single quantity backward through the graph that represents how sensitive the loss is to each intermediate value.
+
+The process begins by assigning the loss an initial gradient of one. Each node then distributes its incoming gradient to its inputs based on how the operation combines them. These contributions are accumulated as the traversal moves backward through the graph.
+
+Crucially, each operation is responsible only for its own local behavior. By repeatedly applying these local rules while walking the graph backward, the correct gradients for all intermediate values and parameters are produced automatically.
+
+When the backward pass finishes, every trainable parameter contains a gradient indicating how changing that parameter would affect the final loss. These gradients can then be used to update the parameters during training.
+## Matrix Multiply
+
+
+```cpp
+auto Z = matmul(W, X);

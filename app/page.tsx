@@ -2,6 +2,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import CopyEmailButton from '@/components/CopyEmailButton'
 import { profile } from '@/data/profile'
+import { blogPosts } from '@/data/blogPosts'
 import GoToCVButton from '@/components/GoToCVButton'
 
 
@@ -242,8 +243,73 @@ export default function Home() {
   </section>
 )}
 
-
-
+        {/* Blog Section */}
+        {blogPosts && blogPosts.length > 0 && (
+          <section className="bg-gray-50 py-16">
+            <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="flex justify-between items-center mb-8">
+                <h2 className="text-3xl font-bold text-gray-900">Latest Blog Posts</h2>
+                <Link 
+                  href="/blog"
+                  className="inline-flex items-center text-gray-600 hover:text-gray-900 font-medium transition-colors"
+                >
+                  View all posts
+                  <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </Link>
+              </div>
+              <div className="grid gap-6">
+                {blogPosts.slice(0, 3).map((post) => (
+                  <div
+                    key={post.id}
+                    className="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow"
+                  >
+                    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2 mb-3">
+                      <time className="text-sm text-gray-600 font-medium">
+                        {new Date(post.date).toLocaleDateString('en-US', {
+                          year: 'numeric',
+                          month: 'long',
+                          day: 'numeric'
+                        })}
+                      </time>
+                      <span className="text-sm text-gray-500">
+                        {post.readTime}
+                      </span>
+                    </div>
+                    <h3 className="text-xl font-semibold text-gray-900 mb-2 hover:text-gray-700 transition-colors">
+                      <Link href={`/blog/${post.id}`}>
+                        {post.title}
+                      </Link>
+                    </h3>
+                    <p className="text-gray-700 mb-4 leading-relaxed">
+                      {post.excerpt}
+                    </p>
+                    <div className="flex flex-wrap gap-2 mb-4">
+                      {post.tags.map((tag) => (
+                        <span
+                          key={tag}
+                          className="inline-block px-3 py-1 text-xs font-medium bg-gray-100 text-gray-700 rounded-full"
+                        >
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                    <Link
+                      href={`/blog/${post.id}`}
+                      className="inline-flex items-center text-gray-900 hover:text-gray-600 font-medium transition-colors"
+                    >
+                      Read more
+                      <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
+                    </Link>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+        )}
 
         {/* Contact Section */}
         <section id="contact" className="bg-gray-50 py-16">

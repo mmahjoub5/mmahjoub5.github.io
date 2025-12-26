@@ -64,12 +64,12 @@ export const profile: CV = {
   // Basic Information
   name: "Amin Mahjoub",
   title: "Eletrical Engineer",
-  tagline: "Building robust hardware-software systems for real-world impact",
+  tagline: "Building robust hardware & software systems",
   email: "aminmahjoub2000@gmail.com",
   location: "Seattle, WA", // Optional
 
   // About Section
-  about: "I am an Electrical Engineer at Microsoft Surface working on high-speed digital and mixed-signal systems, with parallel research experience in machine learning and computer vision. My research interests include hardware–software co-design, efficient inference, and robust perception pipelines for real-world deployment. I enjoy building end-to-end systems that connect algorithms, evaluation, and hardware implementation.",
+  about: "I am an Electrical Engineer at Microsoft Surface working on high-speed digital and mixed-signal systems, with parallel research experience in machine learning and computer vision. My research interests include hardware & software co-design, efficient inference, and robust perception pipelines for real-world deployment. I enjoy building end to end systems that connect algorithms, evaluation, and hardware implementation.",
 
   // Social Links
   links: {
