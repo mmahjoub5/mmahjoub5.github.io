@@ -31,7 +31,15 @@ That combination—modern explanations, textbook rigor, and hand-derived example
 ## Core Idea
 ![Computational graph example](/graph.jpg)
 The foundation of backpropagation—often referred to as automatic differentiation—is the computational graph. A computational graph represents a program as a directed acyclic graph (DAG), where each node corresponds to a mathematical operation and each edge represents the flow of data between operations.
-
+Based on the Computational graph we are able to find the gradients by using the
+Chain Rule:
+$$
+\frac{\partial z}{\partial x_i}
+=
+\sum_{j}
+\frac{\partial z}{\partial y_j}
+\frac{\partial y_j}{\partial x_i}
+$$
 
 
 
@@ -42,6 +50,9 @@ Rather than executing the computation and discarding intermediate results, the f
 
 By the end of the forward pass, the final scalar loss is computed, and the full computation graph encoding every operation needed to apply the chain rule—is available for gradient computation.
 
+
+
+
 # Backward Path
 The backward path computes gradients by traversing the computational graph in reverse order, starting from the final loss node. Instead of recomputing values, it propagates a single quantity backward through the graph that represents how sensitive the loss is to each intermediate value.
 
@@ -50,8 +61,236 @@ The process begins by assigning the loss an initial gradient of one. Each node t
 Crucially, each operation is responsible only for its own local behavior. By repeatedly applying these local rules while walking the graph backward, the correct gradients for all intermediate values and parameters are produced automatically.
 
 When the backward pass finishes, every trainable parameter contains a gradient indicating how changing that parameter would affect the final loss. These gradients can then be used to update the parameters during training.
-## Matrix Multiply
 
+## Design
+
+First I developed the design with only values then moving to matrices. The Value structure are the nodes in the computational graph that stores a value, gradient, a list of parents, and function grad_fn
+
+### Value Struct
+```cpp
+    struct Value {
+        // ===== Forward (primal) =====
+        double value;  
+
+        // ===== Backward (adjoint) =====
+        double grad;
+
+        // ===== Graph structure =====
+        std::vector<std::shared_ptr<Value>> parents;
+
+        // ===== Local backward rule =====
+        std::function<void()> grad_fn;
+    };
+```
+
+####  Value 
+Value of the node during the forward computation 
+
+#### Gradient 
+Gradient value computed during the backward traversal of the DAG
+### Parents 
+List of Values nodes which are the parents of the current node
+#### GRAD_FN 
+Stores the Lambda closure which is called on the backward traversal to automatically calculate the gradients 
+
+### Operations Functions
+
+Operations are helper functions that take value nodes as inputs, compute the forward pass, and implement the backward pass using a C++ lambda closure.
+
+A lambda closure in C++ is an anonymous function that can capture variables from its surrounding scope. This allows the function to retain access to values that were in scope at the time the lambda was created, even after that scope has exited.
+
+In this project, lambda closures are used to implement the backward pass of each operation. During the forward pass, an operation computes its output value and records a lambda that captures the input nodes and any intermediate values needed for differentiation. When backpropagation is triggered, this stored lambda is invoked to propagate gradients to the input nodes.
+
+This design mirrors reverse-mode automatic differentiation: the forward pass builds a computational graph, and the backward pass replays the graph in reverse by executing the captured lambda closures.
+
+For example, for the addition operation:
+
+- Create a new node in the computational graph.
+- Compute and assign the value of the new node based on the operation.
+- Register the input nodes as parents of the new node.
+ - Define the gradient functions for the input nodes.
 
 ```cpp
-auto Z = matmul(W, X);
+std::shared_ptr<Value> add(std::shared_ptr<Value> x, std::shared_ptr<Value> y) {
+    auto out = std::make_shared<Value>();
+    out->parents.push_back(x);
+    out->parents.push_back(y);
+    out->value = x->value + y->value;
+
+    out->grad_fn = [x, y, out]() {
+        x->grad += out->grad;
+        y->grad += out->grad;
+    };
+
+    return out;
+}
+```
+## Matrix 
+To support matrix operations, I introduced a new structure called Tensor, which stores a 1D vector of Value nodes along with shape metadata.
+
+The decision to use a 1D array for storing values was driven by performance considerations and the ability to map easily to higher-dimensional matrices with minimal code changes.
+
+Because the tensor elements are Value nodes, the computational graph is automatically constructed as matrix operations are performed.
+
+```cpp
+struct Tensor {
+    // ===== Forward (primal) =====
+    std::vector<std::shared_ptr<Value>> values;
+
+    // ===== Shape =====
+    std::vector<int> shape;
+};
+```
+
+## Experiments  
+I have created many test cases in the [test](https://github.com/mmahjoub5/autograd_cpp/tree/main/tests). We will focus on two tests, Dummy Neural Network & The finite difference gradient 
+
+
+
+
+
+The finite difference gradient is a numerical method for estimating derivatives by measuring how a function’s output changes in response to small perturbations of its input. Instead of computing derivatives analytically, the gradient is approximated by evaluating the function at nearby points.
+
+For a scalar function \( f(x) \), the derivative can be approximated using a small step size epsilon:
+
+$$
+\frac{df}{dx} \approx \frac{f(x + \epsilon) - f(x)}{\epsilon}
+$$
+
+This idea extends naturally to multivariate functions. To compute the gradient with respect to a vector input, each dimension is perturbed independently while holding the others constant.
+
+Although finite differences are simple to implement and require no knowledge of the function’s internal structure, they have several limitations. The approximation error depends sensitively on the choice of epsilon: if epsilon is too large, the estimate is inaccurate; if it is too small, numerical precision issues dominate. In addition, computing gradients for high-dimensional inputs is expensive, since it requires one function evaluation per dimension.
+
+For these reasons, finite difference gradients are primarily used for debugging and validation, such as checking the correctness of an automatic differentiation implementation, rather than for training models at scale.
+
+### Neural Network
+
+This example implements gradient descent for a single-layer neural network. All parameters and intermediate values are represented as Value nodes, allowing gradients to be computed automatically during backpropagation.
+
+#### Model Parameters and Shapes
+
+The model consists of the following components:
+
+**Weights**: a 2×2 matrix  
+  Stored as a flat 1D vector of four Value nodes, with shape metadata (2, 2)
+
+**Inputs**: a 2×1 column vector  
+  Represents a single input sample with two features
+
+**Bias**: a 2×1 column vector  
+  Added element-wise to the linear output
+
+#### Forward Pass
+
+### Forward Pass
+
+The forward pass computes the output of a single-layer neural network using matrix operations followed by a nonlinearity.
+
+The model parameters and inputs have the following shapes:
+
+- Weights: 2 × 2  
+- Inputs: 2 × 1  
+- Bias: 2 × 1  
+
+The computation proceeds as:
+
+$$
+z = W^{T} x
+$$
+
+where the transposed weight matrix has shape 2 × 2 and the input vector has shape 2 × 1, producing a 2 × 1 output.
+
+Next, the bias vector is added element-wise:
+
+$$
+z_{\text{bias}} = z + b
+$$
+
+A ReLU activation is then applied element-wise to the result:
+
+$$
+a = \mathrm{ReLU}(z_{\text{bias}})
+$$
+
+Finally, the scalar loss is computed by summing the activated outputs:
+
+$$
+\mathcal{L} = a_1 + a_2
+$$
+
+Because all values involved in these operations are Value nodes, the computational graph is constructed automatically during this forward pass.
+
+#### Backward Pass
+
+After the loss is computed, backpropagation is triggered by calling the backward routine on the loss node. The autograd engine traverses the computational graph in reverse order and applies the chain rule at each operation.
+
+Gradients are accumulated for:
+- Each element of the weight matrix
+- Each element of the bias vector
+
+These gradients represent how the loss changes with respect to each parameter.
+
+#### Parameter Update
+
+Once gradients are available, parameters are updated using gradient descent:
+
+$$
+\text{parameter} \leftarrow \text{parameter} - \text{learning rate} \times \text{gradient}
+$$
+
+In the implementation, this update is applied directly to the Value field of each weight and bias node.
+
+#### Gradient Reset
+
+After each update step, all gradients are manually reset to zero. This is required because gradients accumulate across backward passes by default.
+
+#### Training Loop
+
+This process is repeated over multiple iterations:
+- The forward pass rebuilds the computational graph
+- The backward pass computes gradients
+- Parameters are updated
+- Gradients are reset
+
+As training progresses, the loss values decrease, indicating that the model parameters are converging.
+
+## Results
+
+### Finite Difference Gradient
+To validate the correctness of the automatic differentiation implementation, gradients computed by the autograd engine were compared against numerical gradients obtained using finite differences.
+
+The results show close agreement between the two methods:
+``` cpp
+Gradient check for w[1]
+autograd = 1
+numerical = 1
+abs diff = 2.33058e-12
+
+Gradient check for w[3]
+autograd = 2
+numerical = 2
+abs diff = 2.20268e-13
+
+```
+
+The extremely small absolute differences indicate that the analytical gradients produced by backpropagation match the numerical approximations to machine precision. This confirms that both the local gradient definitions and the backward propagation logic are implemented correctly.
+
+Finite difference gradient checks are a powerful debugging tool for automatic differentiation systems, but are computationally expensive and primarily used for verification rather than training.
+
+
+### Nueral Network Results
+
+The training loop was run for multiple iterations using gradient descent. The loss values steadily decreased over time, indicating that the model parameters were successfully optimized.
+
+**Loss over iterations:**
+
+![Loss](/loss.jpg)
+
+The loss decreases almost linearly and converges to a value close to zero, demonstrating stable gradient flow and correct gradient computation throughout the network.
+
+The monotonic decrease in loss and convergence to near-zero error confirm that the automatic differentiation engine correctly propagates gradients through matrix operations and nonlinearities.
+
+## References
+
+- https://aikosh.indiaai.gov.in/static/Deep+Learning+Ian+Goodfellow.pdf
+- https://www.youtube.com/watch?v=i94OvYb6noo

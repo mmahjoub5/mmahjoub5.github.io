@@ -63,7 +63,7 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
     
     // Code blocks
     pre: ({ children }) => (
-      <pre className="bg-gray border border-gray-200 rounded-lg p-4 overflow-x-auto mb-6 text-sm text-gray-900 font-mono">
+      <pre className="bg-gray-50 border border-gray-200 rounded-lg p-4 overflow-x-auto mb-6 text-sm text-gray-900 font-mono">
         {children}
       </pre>
     ),
@@ -71,7 +71,7 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
       // Inline code
       if (!className) {
         return (
-          <code className="bg-gray-100 text--900 px-1.5 py-0.5 rounded text-sm font-mono">
+          <code className="bg-gray-100 px-1 rounded text-sm font-mono">
             {children}
           </code>
         )
