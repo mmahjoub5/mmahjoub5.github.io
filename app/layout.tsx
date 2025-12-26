@@ -22,7 +22,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className="font-sans min-h-dvh w-full bg-base-100">
+      <body className="font-sans min-h-dvh w-full bg-white">
         {children}
       </body>
     </html>

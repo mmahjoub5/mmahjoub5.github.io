@@ -9,7 +9,7 @@ export default function BlogPostLayout({
   return (
     <div className="w-full min-h-screen bg-white">
       <main className="min-h-screen bg-white">
-        <article className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+<article className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           {/* Navigation */}
           <div className="mb-8">
             <Link 

@@ -61,12 +61,30 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
       </a>
     ),
     
-    // Code blocks
-    pre: ({ children }) => (
-      <pre className="bg-gray-50 border border-gray-200 rounded-lg p-4 overflow-x-auto mb-6 text-sm text-gray-900 font-mono">
-        {children}
-      </pre>
-    ),
+pre: ({ children }) => (
+  <pre className="
+    relative
+    bg-gray-50
+    border border-gray-200
+    rounded-none
+    px-4 py-4
+    overflow-x-auto
+    mb-8
+    text-sm
+    leading-snug
+    text-gray-900
+    font-mono
+    max-w-full
+    w-full
+    box-border
+    md:left-1/2 md:right-1/2
+    md:-ml-[50vw] md:-mr-[50vw]
+    md:w-screen
+    md:px-6
+  ">
+    {children}
+  </pre>
+),
     code: ({ children, className }) => {
       // Inline code
       if (!className) {
@@ -78,7 +96,7 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
       }
       // Code block
       return (
-        <code className={className}>
+        <code className={`${className} whitespace-pre-wrap break-words`}>
           {children}
         </code>
       )
