@@ -46,30 +46,7 @@ The SST memory hierarchy is built out of a handful of C++ pieces that talk to ea
 
 With those objects in your head, the rest of the post is mostly about getting them to cooperate correctly.
 
-## Baseline: What Happens Without Snarfing
 
-To know what we are optimizing, let's walk the baseline first. Consider a 4-core system with private L1s and a shared, inclusive L2 acting as the directory. This is the actual directed test I'll use later. The trace is simple:
-
-```
-t=0       Core 0: Write  addr 4096
-t=200     Core 1: Read   addr 4096
-t=100000  Core 2: Read   addr 4096
-t=150000  Core 3: Read   addr 4096
-t=200000  Core 1: Write  addr 4096
-t=250000  Core 0: Read   addr 4096
-t=300000  Core 2: Read   addr 4096
-t=350000  Core 3: Read   addr 4096
-```
-
-Here is how standard MESI handles the first three events (the ones snarfing will optimize):
-
-```
-insert state machine
-```
-
-Three separate network transactions. Cores 2 and 3 each transition **I → IS → S** through a demand miss. The data *already moved once* on the interconnect at t=200 — but the protocol has no mechanism for Cores 2 and 3 to grab it in flight.
-
-That's the inefficiency. Now let's fix it.
 
 ## The Core Idea: Eavesdropping for Efficiency
 
@@ -123,12 +100,6 @@ void MESIInclusive::downgradeOwner(MemEvent * event, SharedCacheLine* line, bool
     }
 }
 ```
-
-Three things to notice:
-
-1. **We reuse the L2's data copy.** The line is already present in the L2; we just attach it as the payload.
-2. **`F_SNARF` is the one-bit marker** that tells a receiving L1 "this is opportunistic, you can ignore it." Demand responses never set it.
-3. **The `addSharer` loop** is the key correctness mechanism and deserves its own section later.
 
 The broadcast itself lives in the base `CoherenceController`:
 
@@ -217,24 +188,6 @@ Four design rules are baked into this handler:
 
 The `IS` allowance on the replacement candidate is a small but worthwhile nuance. `IS` means "a line at this tag slot was invalid, and a demand `GetS` is in flight for whatever address was going to live there." Snarfing into that slot is still safe because the outstanding GetS is tracked by the MSHR, not by the line-state machine; we're writing the slot with a *different* address that the MSHR doesn't know about. The `!mshr_->exists(addr)` guard above refers to the snarf's address, not the candidate's.
 
-## The Trap: Why You Can't Just Call `allocateLine()`
-
-The first instinct for wiring up snarfing is: "I have a `MemEvent` with data, I want it in the cache, I'll call `allocateLine()`." **Do not do this.**
-
-`allocateLine()` is designed for *demand* requests — situations where the CPU has explicitly asked for the line and must receive it. Its contract looks roughly like:
-
-1. Find a replacement candidate.
-2. If the candidate is valid, evict it (possibly with a writeback, possibly with an upstream notification).
-3. While that eviction completes, stall the request in the MSHR.
-4. When the slot is free, install the new line.
-
-Every step of that is wrong for opportunistic snarfing:
-
-- **Step 2 causes cache pollution.** You will evict genuinely useful, hot lines to make room for speculative broadcasts the CPU never asked for. Hit rates collapse.
-- **Step 3 causes MSHR exhaustion.** Every snarf adds an entry to the MSHR. The MSHR has finite entries. On a workload with concurrent broadcasts you will fill it with ghost entries, and the first time the CPU then issues a real miss with no MSHR slot available, the pipeline stalls indefinitely. The simulator reports a deadlock. You spend a day bisecting before you realize your "free" optimization is doing this.
-- **Step 4 inverts the contract.** Demand requests *must* complete; snarfs *should* be dropped on any conflict. The two cannot share a code path.
-
-The fix is the handler above: query the replacement candidate directly, claim it only if it's already invalid, drop the event otherwise. Opportunistic means opportunistic.
 
 ## The Silent Sharer Problem and the Over-Approximation Fix
 
@@ -309,10 +262,3 @@ I want to be precise about what this design does and doesn't claim.
 - **No handling of a cache that drops the snarf and then evicts its real line before the write.** The directory will still invalidate it (because of the over-approximation), so correctness holds, but the extra invalidation is visible in bandwidth counters. That's the cost of the design.
 - **The current design only fires on `GetSResp`.** It is deliberately not wired to `GetXResp`, because snarfing a response that granted `E` or `M` to the requester into a peer as `S` would break the single-writer invariant.
 
-## Why This Matters for ML Systems
-
-When we scale up AI accelerators, the network-on-chip becomes the most congested real estate on the silicon. A modern LLM inference pipeline has dozens of cores pulling on the same weight tiles, the same attention masks, the same KV entries, often within a handful of cycles of each other. A protocol that moves that line once instead of N times is not a micro-optimization — it is the difference between a design that scales and one that does not.
-
-Read Snarfing trades a modest increase in L1 controller logic and a modest over-approximation in directory tracking for a reduction in demand interconnect traffic that, on the directed test above, was *total* for the sharing cores. That's a real tradeoff worth making in workloads where coordinated reads dominate.
-
-Building this in C++ with SST and watching the state transitions cycle-by-cycle collapses the abstraction. You stop seeing "memory" and start seeing the physical realities — wires, flits, MSHR entries, sharer bitmaps. If we're going to keep scaling the next generation of AI systems, these are exactly the hardware-level bottlenecks we have to engineer our way out of.
