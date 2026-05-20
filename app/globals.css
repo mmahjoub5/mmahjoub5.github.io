@@ -25,10 +25,49 @@
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
   }
-  
+
   /* Ensure code within pre tags can scroll */
   pre code {
     display: block;
     min-width: fit-content;
   }
+}
+
+/* Override DaisyUI and Tailwind Typography styles for blog post content */
+
+/* Code blocks */
+.blog-content pre {
+  background-color: rgb(249 250 251) !important; /* gray-50 */
+  color: rgb(17 24 39) !important;               /* gray-900 */
+  border: 1px solid rgb(229 231 235);            /* gray-200 */
+}
+
+.blog-content pre code {
+  background-color: transparent !important;
+  color: inherit !important;
+}
+
+/* Remove the backtick pseudo-elements Tailwind Typography injects around inline code */
+.blog-content :where(code):not(pre code)::before,
+.blog-content :where(code):not(pre code)::after {
+  content: none;
+}
+
+/* Inline code pills */
+.blog-content :where(code):not(pre code) {
+  padding: 0.1em 0.4em;
+  font-size: 0.88em;
+  font-weight: 400;
+  border-radius: 4px;
+  color: #f5a572;
+}
+
+/* List spacing and line-height */
+.blog-content li + li {
+  margin-top: 0.6rem;
+}
+
+.blog-content p,
+.blog-content li {
+  line-height: 1.7;
 }

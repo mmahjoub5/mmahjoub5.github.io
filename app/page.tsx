@@ -2,7 +2,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import CopyEmailButton from '@/components/CopyEmailButton'
 import { profile } from '@/data/profile'
-import { blogPosts } from '@/data/blogPosts'
+import { getAllPostsMeta } from '@/lib/posts'
 import GoToCVButton from '@/components/GoToCVButton'
 
 
@@ -23,6 +23,7 @@ export const metadata: Metadata = {
 }
 
 export default function Home() {
+  const blogPosts = getAllPostsMeta()
   return (
     <div className="w-full min-h-screen bg-white">
 
@@ -262,7 +263,7 @@ export default function Home() {
               <div className="grid gap-6">
                 {blogPosts.slice(0, 3).map((post) => (
                   <div
-                    key={post.id}
+                    key={post.slug}
                     className="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow"
                   >
                     <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2 mb-3">
@@ -278,7 +279,7 @@ export default function Home() {
                       </span>
                     </div>
                     <h3 className="text-xl font-semibold text-gray-900 mb-2 hover:text-gray-700 transition-colors">
-                      <Link href={`/blog/${post.id}`}>
+                      <Link href={`/blog/${post.slug}`}>
                         {post.title}
                       </Link>
                     </h3>
@@ -296,7 +297,7 @@ export default function Home() {
                       ))}
                     </div>
                     <Link
-                      href={`/blog/${post.id}`}
+                      href={`/blog/${post.slug}`}
                       className="inline-flex items-center text-gray-900 hover:text-gray-600 font-medium transition-colors"
                     >
                       Read more

@@ -62,9 +62,11 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
     ),
     
 pre: ({ children }) => (
-  <pre className="
+  <pre
+    data-theme="light"
+    className="
     relative
-    bg-gray-50
+    !bg-gray-50
     border border-gray-200
     rounded-none
     px-4 py-4
@@ -72,11 +74,13 @@ pre: ({ children }) => (
     mb-8
     text-sm
     leading-snug
-    text-gray-900
+    !text-gray-900
     font-mono
     max-w-full
     w-full
     box-border
+    [&>code]:bg-transparent
+    [&>code]:text-inherit
     md:left-1/2 md:right-1/2
     md:-ml-[50vw] md:-mr-[50vw]
     md:w-screen
@@ -89,7 +93,7 @@ pre: ({ children }) => (
       // Inline code
       if (!className) {
         return (
-          <code className="bg-gray-100 px-1 rounded text-sm font-mono">
+          <code className="font-mono text-sm">
             {children}
           </code>
         )
