@@ -1,11 +1,13 @@
-export const metadata = {
-  title: "Building a Minimal Tensor Autograd Engine in C++",
-  description:
-    "Reverse-mode autodiff, matrix multiply backprop, and gradient verification via finite differences.",
-};
-
-
-
+---
+title: "Building a Minimal Tensor Autograd Engine in C++"
+date: "2025-01-20"
+excerpt: "Reverse-mode autodiff, matrix multiply backprop, and gradient verification via finite differences. A deep dive into implementing automatic differentiation from scratch."
+tags:
+  - C++
+  - Machine Learning
+  - Autodiff
+readTime: "12 min read"
+---
 
 # Building a Minimal Tensor Autograd Engine in C++
 
@@ -14,13 +16,13 @@ implemented from scratch in C++.
 
 [Github Link](https://github.com/mmahjoub5/autograd_cpp/tree/main)
 ## Motivation
-I was grabbing lunch with my cousin when we started talking about topics we’d learned in school. At some point, I brought up automatic differentiation in modern AI tools. I repeated what I remembered from class that if you know the forward computation, you can automatically compute gradients.
+I was grabbing lunch with my cousin when we started talking about topics we'd learned in school. At some point, I brought up automatic differentiation in modern AI tools. I repeated what I remembered from class that if you know the forward computation, you can automatically compute gradients.
 
-Then he asked a simple question: “How does it actually work?”
+Then he asked a simple question: "How does it actually work?"
 
-I didn’t have a good answer.
+I didn't have a good answer.
 
-That moment made it clear that, while I could use autograd every day, I didn’t truly understand the mechanism behind it. So when I got home, I decided to build a small automatic differentiation engine from scratch. 
+That moment made it clear that, while I could use autograd every day, I didn't truly understand the mechanism behind it. So when I got home, I decided to build a small automatic differentiation engine from scratch. 
 
 To ground things properly, I went back to a textbook. Deep Learning by Goodfellow, Bengio, and Courville turned out to be exactly what I needed: Chapter 6.5 covers the theory and algorithms behind backpropagation and automatic differentiation in a clear, formal way.
 
@@ -149,8 +151,7 @@ I have created many test cases in the [test](https://github.com/mmahjoub5/autogr
 
 
 
-
-The finite difference gradient is a numerical method for estimating derivatives by measuring how a function’s output changes in response to small perturbations of its input. Instead of computing derivatives analytically, the gradient is approximated by evaluating the function at nearby points.
+The finite difference gradient is a numerical method for estimating derivatives by measuring how a function's output changes in response to small perturbations of its input. Instead of computing derivatives analytically, the gradient is approximated by evaluating the function at nearby points.
 
 For a scalar function \( f(x) \), the derivative can be approximated using a small step size epsilon:
 
@@ -160,7 +161,7 @@ $$
 
 This idea extends naturally to multivariate functions. To compute the gradient with respect to a vector input, each dimension is perturbed independently while holding the others constant.
 
-Although finite differences are simple to implement and require no knowledge of the function’s internal structure, they have several limitations. The approximation error depends sensitively on the choice of epsilon: if epsilon is too large, the estimate is inaccurate; if it is too small, numerical precision issues dominate. In addition, computing gradients for high-dimensional inputs is expensive, since it requires one function evaluation per dimension.
+Although finite differences are simple to implement and require no knowledge of the function's internal structure, they have several limitations. The approximation error depends sensitively on the choice of epsilon: if epsilon is too large, the estimate is inaccurate; if it is too small, numerical precision issues dominate. In addition, computing gradients for high-dimensional inputs is expensive, since it requires one function evaluation per dimension.
 
 For these reasons, finite difference gradients are primarily used for debugging and validation, such as checking the correctness of an automatic differentiation implementation, rather than for training models at scale.
 

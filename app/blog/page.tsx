@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { profile } from '@/data/profile'
-import { blogPosts } from '@/data/blogPosts'
+import { getAllPostsMeta } from '@/lib/posts'
 
 export const metadata = {
   title: `Blog | ${profile.name}`,
@@ -8,6 +8,7 @@ export const metadata = {
 }
 
 export default function BlogPage() {
+  const blogPosts = getAllPostsMeta()
   return (
     <div className="w-full min-h-screen bg-white">
       <main className="min-h-screen bg-white">
@@ -34,8 +35,8 @@ export default function BlogPage() {
           {/* Blog Posts List */}
           <div className="space-y-8">
             {blogPosts.map((post) => (
-              <article 
-                key={post.id}
+              <article
+                key={post.slug}
                 className="border-b border-gray-200 pb-8 last:border-b-0"
               >
                 <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2 mb-3">
@@ -50,17 +51,17 @@ export default function BlogPage() {
                     {post.readTime}
                   </span>
                 </div>
-                
+
                 <h2 className="text-2xl font-bold text-gray-900 mb-3 hover:text-gray-700 transition-colors">
-                  <Link href={`/blog/${post.id}`}>
+                  <Link href={`/blog/${post.slug}`}>
                     {post.title}
                   </Link>
                 </h2>
-                
+
                 <p className="text-gray-700 mb-4 leading-relaxed">
                   {post.excerpt}
                 </p>
-                
+
                 <div className="flex flex-wrap gap-2 mb-4">
                   {post.tags.map((tag) => (
                     <span
@@ -71,9 +72,9 @@ export default function BlogPage() {
                     </span>
                   ))}
                 </div>
-                
+
                 <Link
-                  href={`/blog/${post.id}`}
+                  href={`/blog/${post.slug}`}
                   className="inline-flex items-center text-gray-900 hover:text-gray-600 font-medium transition-colors"
                 >
                   Read more
