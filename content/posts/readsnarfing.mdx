@@ -33,18 +33,6 @@ Before the code, a quick primer so the rest makes sense.
 
 MESI is safe, but chatty. The case we care about: Core A has a line in `M`, and Core B issues a read for that address. The directory forces Core A to downgrade M → S and forward the data. In a bus-based system, every other cache on the wire *could* see that data too — but in a directory-based system, the data is pointed at Core B and Core B only. Our goal is to extend that point-to-point response into a conditional broadcast.
 
-### The SST Object Model You Actually Need to Know
-
-The SST memory hierarchy is built out of a handful of C++ pieces that talk to each other through events. If you want to modify it, you need a mental model of what each piece owns. Here are the ones that matter for this post:
-
-- **MemEvent** — the unit of traffic on the interconnect. Carries a command (`GetS`, `GetX`, `GetSResp`, `Inv`, `FetchInvX`, …), source, destination, address, payload, and a set of flags. We will add exactly one bit to this: `F_SNARF`.
-- **CoherenceController** — the base subcomponent that every protocol (MESI, MSI, Incoherent, Directory) subclasses. It owns the event handlers (`handleGetS`, `handleGetXResp`, etc.) and the forwarding plumbing (`forwardByAddress`, `forwardByDestination`).
-- **link_up_ and link_down_** — MemLinkBase handles for the network interfaces. link_up_ talks toward the CPU side (L1s, or a higher-level cache), link_down_ talks toward memory (lower-level cache or DRAM). link_up_->getSources()` gives us the set of peer caches connected above — which is exactly the set we want to broadcast a snarf to.
-- **MSHR (Miss Status Holding Register)** — the structure that tracks in-flight misses. If there is an outstanding request for an address, it sits in the MSHR until the response comes back. Touching the MSHR wrong is the fastest way to deadlock the simulator.
-- **CacheArray** — the tag array and data array. For L1 it is `CacheArray<L1CacheLine>`. Key methods: `lookup(addr)`, `findReplacementCandidate(addr)`, `replace(addr, line)`.
-- **Counters.h** — my instrumentation, a per-cache CounterBank that records transitions and events. We'll read it in the results section.
-
-With those objects in your head, the rest of the post is mostly about getting them to cooperate correctly.
 
 
 
