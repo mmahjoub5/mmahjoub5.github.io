@@ -63,13 +63,13 @@ export interface CV extends Profile {
 export const profile: CV = {
   // Basic Information
   name: "Amin Mahjoub",
-  title: "Eletrical Engineer",
+  title: "Electrical Engineer",
   tagline: "Building robust hardware & software systems",
   email: "aminmahjoub2000@gmail.com",
-  location: "Seattle, WA", // Optional
+  location: "Mountain View, CA", // Optional
 
   // About Section
-  about: "I am an Electrical Engineer at Microsoft Surface working on high-speed digital and mixed-signal systems, with parallel research experience in machine learning and computer vision. My research interests include hardware & software co-design, efficient inference, and robust perception pipelines for real-world deployment. I enjoy building end to end systems that connect algorithms, evaluation, and hardware implementation.",
+  about: "I am an Electrical Engineer at Aurora, where I design the analog and mixed-signal electronics behind in-house FMCW lidar — power supply stability, transimpedance amplifiers, analog control loops, and the electro-optical and firmware integration that ties the sensor together. Previously I spent three years at Microsoft Surface on high-speed digital and mixed-signal systems shipping at high volume. I also work on machine learning and computer vision research, with interests in hardware & software co-design, efficient inference, and robust perception pipelines for real-world deployment.",
 
   // Social Links
   links: {
@@ -82,7 +82,8 @@ export const profile: CV = {
 
   // Research Interests (3-6 items recommended)
   interests: [
-    "Computer Hardware",
+    "Analog & Mixed-Signal Design",
+    "FMCW Lidar & Electro-Optical Systems",
     "Digital Systems",
     "Embedded Systems",
     "Signal Processing",
@@ -147,6 +148,10 @@ export const profile: CV = {
   // News / Updates (most recent first, 3-5 items recommended)
   news: [
     {
+      date: "Jun 2026",
+      text: "Joined Aurora as Electrical Engineer 2, working on analog and electro-optical design for in-house FMCW lidar.",
+    },
+    {
       date: "Dec 2025",
       text: "WACV 2026 workshop submission and recent project work.",
     },
@@ -179,9 +184,21 @@ export const profile: CV = {
 
   experience: [
     {
+      title: "Electrical Engineer 2",
+      organization: "Aurora — Mountain View, CA",
+      period: "Jun 2026 – Present",
+      details: [
+        "Own analog and mixed-signal PCB design for in-house FMCW lidar, including power supply stability, transimpedance amplifiers (TIA), and op-amp signal chains.",
+        "Design and characterize analog control loops, using LTSpice simulation and bode plot analyzer measurements to validate stability margins.",
+        "Lead lab bring-up and board debug with oscilloscopes, bode analyzers, and electronic loads, closing the loop between simulation and measured silicon.",
+        "Implement on-board digital logic and support electro-optical integration between the photonic front end and the electrical subsystem.",
+        "Develop and integrate firmware for sensor control, calibration, and data path bring-up.",
+      ],
+    },
+    {
       title: "Electrical Engineer",
       organization: "Microsoft Surface — Seattle, WA",
-      period: "Aug 2023 – Present",
+      period: "Aug 2023 – Jun 2026",
       details: [
         "Led end-to-end electrical development including architecture, prototyping, validation, and mass production (500K+ units annually).",
         "Designed high-speed digital and mixed-signal PCB systems (10+ layers) integrating SoCs, GPUs, DDR, NVMe, 5G, and camera subsystems.",
@@ -214,7 +231,9 @@ export const profile: CV = {
   skills: [
     "Python, C/C++, TypeScript/JavaScript",
     "PyTorch, CUDA, ADMM optimization, CNN/UNet models, VLM evaluation",
+    "Analog design: TIAs, op-amp signal chains, power supply stability, control loop compensation",
     "High-speed digital design (PCIe, USB, MIPI, DDR), mixed-signal circuits",
+    "Lab bring-up & characterization: oscilloscope, bode plot analyzer, electronic load, power analysis",
     "Signal / power integrity, ARM RTOS/HAL firmware, LTSpice",
     "Docker, Linux, CI/CD, Google Sheets API, backend pipelines",
   ],

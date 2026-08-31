@@ -11,9 +11,11 @@ import type { Metadata } from 'next'
 export const metadata: Metadata = {
   title: 'Amin Mahjoub | Electrical Engineer | Hardware–Software Co-Design',
   description:
-    'Electrical Engineer at Microsoft Surface working on hardware–software co-design, efficient inference, and robust perception systems.',
+    'Electrical Engineer at Aurora working on analog and electro-optical design for FMCW lidar, hardware–software co-design, and robust perception systems.',
   keywords: [
     'Electrical Engineer',
+    'Analog Design',
+    'FMCW Lidar',
     'Hardware Software Co-Design',
     'Embedded Systems',
     'Computer Vision',
