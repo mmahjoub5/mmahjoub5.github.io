@@ -270,7 +270,7 @@ export default function Home() {
                   >
                     <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2 mb-3">
                       <time className="text-sm text-gray-600 font-medium">
-                        {new Date(post.date).toLocaleDateString('en-US', {
+                        {new Date(`${post.date}T00:00:00`).toLocaleDateString('en-US', {
                           year: 'numeric',
                           month: 'long',
                           day: 'numeric'

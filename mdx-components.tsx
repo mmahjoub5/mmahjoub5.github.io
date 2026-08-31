@@ -106,6 +106,16 @@ pre: ({ children }) => (
       )
     },
     
+    // Images
+    img: ({ src, alt }) => (
+      <img
+        src={src}
+        alt={alt}
+        loading="lazy"
+        className="block max-w-full h-auto mx-auto my-8 rounded border border-gray-200"
+      />
+    ),
+
     // Blockquotes
     blockquote: ({ children }) => (
       <blockquote className="border-l-4 border-gray-300 pl-4 italic text-gray-700 my-4">

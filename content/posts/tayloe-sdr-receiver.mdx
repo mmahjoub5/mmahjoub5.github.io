@@ -1,0 +1,241 @@
+---
+title: "Building a Tayloe SDR Receiver"
+date: "2026-08-30"
+excerpt: "A 2\"x2\" quadrature sampling detector, from schematic to fab. Sampling-capacitor sizing, a Johnson counter for free quadrature, single-supply difference amps, and the four things design review caught before I sent it out."
+tags:
+  - RF
+  - SDR
+  - Analog Design
+  - PCB
+  - KiCad
+readTime: "11 min read"
+---
+
+# Building a Tayloe SDR Receiver
+
+I wanted a project that would force me to actually design analog rather than
+read about it. Software-defined radio is a good forcing function: the front
+end is unavoidably analog, the clocking is unavoidably digital, and if you get
+either one wrong the failure shows up as something you can hear.
+
+This is the first revision of a 2"x2" HF receiver board. Antenna in on SMA,
+I/Q samples out over USB, all demodulation on the laptop. Below is how it
+works and what I got wrong on the way to sending it out for fab.
+
+![Block diagram of the receiver: SMA input through a 30 MHz low-pass filter into the CBTLV3253 Tayloe mixer, then a gain-31.6 preamp into a PCM1808 stereo ADC. A Si5351 25 MHz reference drives a 74LVC74 divide-by-four that clocks the mixer. The ADC feeds the RP2040 over I2S into PIO and DMA, and out to a laptop running GNU Radio.](/tayloe-block-diagram.png)
+
+The whole signal chain: analog in green, clocking in orange, digital in
+purple.
+
+## The Tayloe detector
+
+The core of the receiver is a Tayloe quadrature sampling detector. The idea is
+elegant enough that it took me a while to believe it works.
+
+You take the RF input and connect it, in rotation, to four capacitors — one at
+a time, each for exactly a quarter of the LO period. Each capacitor integrates
+the input over the window it's connected for. If the switching rate equals the
+carrier frequency, capacitor 1 accumulates the signal at 0 degrees of phase,
+capacitor 2 at 90, capacitor 3 at 180, capacitor 4 at 270. Differencing
+0 against 180 gives you I; 90 against 270 gives you Q.
+
+That's it. No diode ring, no transformer, no conversion loss in the usual
+sense. It's a sampling mixer, and because the switch is on for a full quarter
+period rather than an instant, it integrates rather than samples — which means
+it also gives you gain instead of throwing away energy.
+
+The switch is an `SN74CBTLV3253` — a dual 4:1 FET multiplexer. Nothing exotic,
+just NMOS pass transistors with a decoder in front. Ron is roughly 7 ohms.
+
+### Picking the sampling capacitor
+
+The capacitor value sets the audio bandwidth directly. The switch presents the
+source resistance to each cap for 1/4 of the time, so the effective RC uses
+n = 4:
+
+```
+f_3dB = 1 / (2 * pi * n * R * C)
+```
+
+With a 50 ohm antenna and 100 nF caps:
+
+```
+f_3dB = 1 / (2 * pi * 4 * 50 * 100e-9)
+      = 1 / (2 * pi * 2e-5)
+      = 7958 Hz
+```
+
+About 8 kHz, which is right for AM and comfortable for SSB. I went with
+X7R here. The usual objection is dielectric distortion, but these caps sit at a
+fixed 1.65 V DC bias with only millivolts of signal on top, so they barely see
+any voltage swing at all. Buying all four from the same reel matters more than
+the tolerance spec, since it's the *matching* between the four that sets I/Q
+balance, not their absolute value.
+
+## Generating quadrature
+
+The mixer needs four phases at the carrier frequency, which means the switch
+control needs to run at 4x the LO. A `Si5351A` generates the master clock —
+I2C-programmable, 25 MHz crystal reference, three outputs.
+
+To turn that into two quadrature square waves I used a `74LVC74` dual D
+flip-flop wired as a mod-4 Johnson counter. The Q output of the second stage
+feeds back inverted to the D input of the first, giving the sequence:
+
+```
+(LSB, MSB): 00 -> 01 -> 11 -> 10 -> 00 ...
+```
+
+Two outputs, 90 degrees apart, both at exactly f_clk / 4. The divide-by-four
+is the point: a Johnson counter's outputs are inherently in quadrature with a
+phase relationship set by logic, not by matched delay lines. Phase accuracy
+comes free.
+
+Those two lines drive the mux select pins. Working through the truth table,
+the sequence selects the four phase taps in the order 0, 90, 180, 270 — which
+is the check I most wanted to get right, because getting it wrong doesn't
+produce a broken board, it produces a board that receives on the image
+frequency and looks fine until you measure it.
+
+## Differencing and gain
+
+Each I/Q pair goes into a difference amplifier. Gain is set by 1k input
+resistors and 31.6k feedback:
+
+```
+Av = 31.6k / 1k = 31.6   (about 30 dB)
+```
+
+The closed-loop bandwidth requirement here is almost embarrassingly low. Noise
+gain is 1 + 31.6 = 32.6, so with a 14 MHz GBW part:
+
+```
+BW = 14e6 / 32.6 = 429 kHz
+```
+
+against a signal band that stops around 3 kHz. Over 100x margin. Slew rate is
+even less demanding — 3 kHz at 2 Vpp needs
+
+```
+SR = 2 * pi * 3000 * 1 = 0.019 V/us
+```
+
+which every op amp ever made clears by three orders of magnitude.
+
+What actually matters is input voltage noise, referred through that noise gain
+of 32.6, and the 1/f corner — because at a few hundred Hz you're often sitting
+inside the flicker region where the datasheet's headline 10 kHz number is a
+polite fiction. The resistors contribute too:
+
+```
+Rin thermal:  sqrt(4kTR) = 4.07 nV/rtHz, times 31.6  -> 129 nV/rtHz
+Rf thermal:   4.07 * sqrt(31.6)                      ->  23 nV/rtHz
+op amp:       en * 32.6
+```
+
+At 8.5 nV/rtHz the amplifier contributes 277 nV/rtHz and dominates both
+resistor terms, which is the correct place to land — it means the resistor
+values aren't the thing limiting you.
+
+Everything is single-supply, so a 1.65 V mid-rail bias runs through the whole
+analog chain. A separate op amp buffers a 10k/10k divider and feeds two
+RC-filtered legs, one for the mixer common node and one for the amplifier
+references.
+
+## Digitizing
+
+A `PCM1808` stereo audio ADC takes I and Q as its two channels — 24-bit, I2S
+out. Using an audio codec as an SDR back end feels like a hack until you
+realize the requirements are identical: two matched channels, DC to ~20 kHz,
+90+ dB dynamic range.
+
+I run it in **master mode**, with MD1 and MD0 both pulled high. The ADC
+generates BCK and LRCK from its own system clock, which comes from a spare
+Si5351 output. The RP2040 is therefore an I2S *slave* — its PIO block just
+clocks data in on someone else's edges. This is worth writing down somewhere
+your future self will find it, because bringing up PIO in master mode means two
+chips driving the same two pins.
+
+## Firmware, or the lack of it
+
+The microcontroller does as little as possible. It is a dumb digitizer:
+
+- PIO captures the I2S stream
+- DMA writes it into a circular buffer
+- A separate read pointer feeds the USB stream
+- I2C tunes the Si5351
+
+That's the whole firmware. No demodulation, no filtering, no AGC. All of that
+runs on the laptop in GNU Radio, where I can change a filter by dragging a
+block instead of reflashing.
+
+This was a deliberate reversal. My first plan had AM and SSB demod running on
+the MCU. Moving it to the host meant the firmware became something I could
+finish in an evening and stop thinking about, and the interesting DSP became
+something I could iterate on in seconds. On a first-revision board, the thing
+you want most is for as much as possible to be changeable without a soldering
+iron.
+
+## What I got wrong
+
+The design review process was more educational than the design.
+
+**The package suffix is part of the part number.** I put `OPA2320` in the
+schematic comment field with no suffix. JLCPCB's BOM matcher happily paired it
+with `OPA2320AIDR` — the D suffix, SOIC-8, 1.27 mm pitch — against a footprint
+drawn for DGK8, which is MSOP at 0.65 mm pitch. Nearly double the pitch. It
+would have come back unbuildable, and the tool raised no warning, because from
+its point of view it found an exact match for what I'd typed. Every line in a
+BOM needs the full orderable part number, not the family name.
+
+**Cheap parts exist and the expensive one is rarely necessary.** The OPA2320
+pair was a third of my entire BOM cost. Working backward from what the circuit
+actually needs — 2.5 V minimum supply, rail-to-rail I/O, under ~10 nV/rtHz,
+and a bandwidth requirement I'd already shown was met with 100x margin — the
+constraint that eliminated most candidates wasn't bandwidth or noise. It was
+minimum supply voltage. A lot of attractive low-noise audio op amps stop at
+4.5 V, which is useless on a 3.3 V rail. Filtering on supply range first and
+taking whatever GBW fell out got the same performance for about a quarter of
+the price.
+
+**Assembly overhead can exceed the parts cost.** On a 5-board order my
+components came to \$8.90/board while the assembly line item was \$24.79/board.
+The gap is largely per-unique-part loading fees, and those are fixed costs —
+they halve per board if you order ten. Some are avoidable for free by choosing
+values that are stocked as basic parts; a resistor value that happens to be
+E96 instead of E24 costs you a setup fee for nothing, since what matters in a
+differential pair is matching, not the absolute value.
+
+**Rotation conventions are a real failure mode.** I had a crystal placed at a
+non-orthogonal angle — no functional reason, just a stray drag during
+placement. Anything other than a clean multiple of 90 degrees compounds the
+rotation-convention offset between CAD pick-and-place output and the assembly
+machine. It costs nothing to straighten and removes a whole class of failure.
+
+## Open questions for revision 2
+
+Things I know are imperfect and shipped anyway, because a first spin is for
+learning:
+
+- The mixer moved from a 5 V part to a 3.3 V one, which halves the gate
+  overdrive on the pass transistors. Ron roughly doubles and becomes more
+  signal-dependent. I want to measure the conversion loss against the sim.
+- The Si5351 shares a supply rail with the analog front end. A ferrite helps.
+  It is not the same as a separate regulator.
+- The LO routing crosses the board diagonally to reach the mixer, passing near
+  the preamp summing nodes. A 3 ns edge has energy well past 100 MHz. Moving
+  the divider next to the mixer is the obvious fix.
+- The analog and digital grounds join through a single ferrite bead. Defensible,
+  but the I/Q signals cross that boundary on their way to the ADC.
+
+## Bring-up plan
+
+When the boards arrive:
+
+1. Power only. Check both rails and the bias voltage at the test points.
+2. Scope the two quadrature clocks at the mixer. Confirm the divide ratio and
+   the 90 degree relationship before trusting anything downstream.
+3. Inject a known carrier and look for a tone at the difference frequency.
+4. Check I/Q amplitude and phase balance, and compute image rejection from it.
+
+Then the interesting part starts.
