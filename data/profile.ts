@@ -93,6 +93,15 @@ export const profile: CV = {
   // Projects (3-6 recommended for homepage)
   projects: [
     {
+      title: "Tayloe Mixer SDR Receiver",
+      description:
+        "Designed a 2\"x2\" HF software-defined radio receiver from schematic to fab. A Tayloe quadrature sampling detector (SN74CBTLV3253) downconverts directly to baseband, with a Si5351 reference and 74LVC74 Johnson counter generating the four-phase LO for free. Single-supply difference amplifiers set gain into a PCM1808 audio ADC, and an RP2040 acts as a dumb digitizer — PIO plus DMA streaming I/Q over USB so all demodulation happens on the host in GNU Radio.",
+      links: [
+        { label: "Write-up", url: "/blog/tayloe-sdr-receiver" },
+      ],
+      tags: ["RF", "SDR", "Analog Design", "PCB", "KiCad"],
+    },
+    {
       title: "Defogging Benchmark for Autonomous Driving (WACV 2026 Submission)",
       description:
         "Designed and ran a large-scale benchmark comparing classical filters, transformer-based models, chained preprocessing, and VLM-based image editing for fog removal. Built quantitative evaluation for object detection (mAP) and panoptic segmentation (PQ/RQ/SQ) using YOLOv11l and Mask2Former, and developed a VLM-as-a-judge rubric that strongly correlated with mAP (r = 0.94).",
