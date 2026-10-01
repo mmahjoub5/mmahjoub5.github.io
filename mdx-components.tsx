@@ -27,19 +27,19 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
     
     // Paragraphs
     p: ({ children }) => (
-      <p className="text-gray-700 leading-relaxed mb-4">
+      <p className="text-lg md:text-xl text-gray-700 leading-relaxed mb-4">
         {children}
       </p>
     ),
     
     // Lists
     ul: ({ children }) => (
-      <ul className="list-disc list-inside space-y-2 mb-4 text-gray-700">
+      <ul className="list-disc list-inside space-y-2 mb-4 text-lg md:text-xl text-gray-700">
         {children}
       </ul>
     ),
     ol: ({ children }) => (
-      <ol className="list-decimal list-inside space-y-2 mb-4 text-gray-700">
+      <ol className="list-decimal list-inside space-y-2 mb-4 text-lg md:text-xl text-gray-700">
         {children}
       </ol>
     ),
@@ -112,7 +112,7 @@ pre: ({ children }) => (
         src={src}
         alt={alt}
         loading="lazy"
-        className="block max-w-full h-auto mx-auto my-8 rounded border border-gray-200"
+        className="block max-w-full md:max-w-md h-auto mx-auto my-8 rounded border border-gray-200"
       />
     ),
 
